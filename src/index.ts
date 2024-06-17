@@ -13,11 +13,21 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use("/uploads", express.static("uploads"));
+
 import authRoutes from "./routes/authRoutes";
+import blogRoutes from "./routes/blogRoutes";
+import forumRoutes from "./routes/forumRoutes";
+import categoryRoutes from "./routes/categoryRoutes";
+import userRoutes from "./routes/userRoutes";
 import passport from "passport";
 import "./config/passport";
 
 app.use("/api/auth", authRoutes);
+app.use("/api/blogs", blogRoutes);
+app.use("/api/forum", forumRoutes);
+app.use("/api/category", categoryRoutes);
+app.use("/api/user", userRoutes);
 app.use(passport.initialize());
 
 mongoose
