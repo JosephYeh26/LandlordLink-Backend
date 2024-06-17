@@ -160,6 +160,10 @@ export const upvoteForumPost: any = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
+    if (forumPost.author.toString() === userId.toString()) {
+      return res.status(400).json({ message: "Cannot upvote your own post" });
+    }
+
     if (forumPost.upvoters.includes(userId)) {
       return res.status(400).json({ message: "Already upvoted" });
     }
@@ -197,6 +201,10 @@ export const upvoteReply: any = async (req: AuthRequest, res: Response) => {
     const reply = replies.id(replyId);
     if (!reply) {
       return res.status(404).json({ message: "Reply not found" });
+    }
+
+    if (reply.author.toString() === userId.toString()) {
+      return res.status(400).json({ message: "Cannot upvote your own reply" });
     }
 
     if (!reply.upvoters) {
