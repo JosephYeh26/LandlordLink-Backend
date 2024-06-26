@@ -8,8 +8,9 @@ import User from "../models/userModel";
 // Create Forum Post
 export const createForumPost: any = async (req: AuthRequest, res: Response) => {
   try {
-    const { category: categoryName, title, content } = req.body;
+    const { title, content, category: categoryName } = req.body;
     // Check if category exists
+    console.log(req.body);
     const category = await Category.findOne({ name: categoryName });
     if (!category) {
       return res.status(400).json({ message: "Invalid category" });
@@ -54,6 +55,7 @@ export const getForumPostById: any = async (req: Request, res: Response) => {
         "author",
         "username avatar postsCount votesCount propertyAddress"
       )
+      .populate("category", "name")
       .populate(
         "replies.author",
         "username postsCount votesCount job propertyAddress avatar"
