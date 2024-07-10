@@ -1,4 +1,5 @@
 import bodyParser from "body-parser";
+import session from "express-session";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -23,12 +24,27 @@ import userRoutes from "./routes/userRoutes";
 import passport from "passport";
 import "./config/passport";
 
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  throw new Error("SESSION_SECRET is not defined in the environment variables");
+}
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET as string,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }, // For development; set to true for production
+  })
+);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/forum", forumRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/user", userRoutes);
 app.use(passport.initialize());
+app.use(passport.session());
 
 mongoose
   .connect(process.env.MONGODB_URI as string)

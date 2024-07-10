@@ -16,14 +16,23 @@ router.get(
 );
 router.get(
   "/google/callback",
-  passport.authenticate("google", { session: false }),
+  passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    const token = jwt.sign(
-      { id: (req.user as IUser)._id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "1h" }
-    );
-    res.redirect(`/?token=${token}`);
+    try {
+      const user = req.user as IUser;
+      const token = jwt.sign(
+        { id: user._id },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "1h" }
+      );
+      const redirectUrl = `http://localhost:3000?token=${token}&user=${encodeURIComponent(
+        JSON.stringify(user)
+      )}`;
+      res.redirect(redirectUrl);
+      console.log(token + " and " + user);
+    } catch (err) {
+      res.status(500).json({ err });
+    }
   }
 );
 
